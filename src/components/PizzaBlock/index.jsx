@@ -1,11 +1,13 @@
 import React from "react"
 
+
 function PizzaBlock({title, price, imageUrl, sizes, id, types}) {
   const [activeType, setActiveType] = React.useState(0)
   const [activeSize, setActiveSize] = React.useState(0)
 
   return (
-    <div key={id} className="pizza-block">
+    <div className="pizza_block-wrapper">
+      <div key={id} className="pizza-block">
   <img
     className="pizza-block__image"
     src={imageUrl}
@@ -44,6 +46,7 @@ function PizzaBlock({title, price, imageUrl, sizes, id, types}) {
     </button>
   </div>
             </div> 
+    </div>
   )
 };
 
