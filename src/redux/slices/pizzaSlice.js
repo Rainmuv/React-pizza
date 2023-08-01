@@ -6,7 +6,12 @@ export const fetchPizzas = createAsyncThunk(
   async ({order, sortBy, category, search, pageCount}, thunkAPI) => {
 
     const { data } = await axios.get(`https://6467fd09e99f0ba0a81c0007.mockapi.io/items?page=${pageCount}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
-    return  data
+
+    if(data.length === 0) {
+      return thunkAPI.rejectWithValue('пици пустые')
+    }
+
+    return thunkAPI.fulfillWithValue(data)
   }
 
   
@@ -40,6 +45,8 @@ export const pizzaSlice = createSlice({
     }
   }
 })
+
+export const selectPizzas = (state) => state.pizza
 
 export const { setPizzas } = pizzaSlice.actions
 

@@ -4,12 +4,11 @@ import Sort, { sortList } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaSkeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
-import { SearContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux'
-import { setCategoryId, setPageCount, setFilter } from '../redux/slices/filterSlice';
-import { fetchPizzas } from '../redux/slices/pizzaSlice';
+import { setCategoryId, setPageCount, setFilter, selectFilter } from '../redux/slices/filterSlice';
+import { fetchPizzas, selectPizzas } from '../redux/slices/pizzaSlice';
 import qs from 'qs'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 const Home = () => {
@@ -17,10 +16,10 @@ const Home = () => {
   const dispatch = useDispatch()
   const isSearch = React.useRef(false)
   const isMounted = React.useRef(false)
-  const { searchValue } = React.useContext(SearContext)
 
-  const {categoriesId, sort, pageCount} = useSelector(state => state.filter);
-  const  { pizItems, status }  = useSelector(state => state.pizza);
+
+  const {categoriesId, sort, pageCount, searchValue} = useSelector(selectFilter);
+  const  { pizItems, status }  = useSelector(selectPizzas);
   const onClickCategory = (id) => {
     dispatch(setCategoryId(id))
   }
@@ -35,14 +34,6 @@ const Home = () => {
     const sortBy = sort.sortProperty.replace('-', '');
     const category = categoriesId > 0 ? `category=${categoriesId}`: ''
     const search = searchValue ? `&search=${searchValue}`: ''
-
-    // axios.get(
-    //   `https://6467fd09e99f0ba0a81c0007.mockapi.io/items?page=${pageCount}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
-    //   )
-    //   .then((res) => {
-    //     setPizzas(res.data)
-    //     setIsloading(false)
-    //   });
 
     try {
       dispatch(fetchPizzas({
@@ -61,7 +52,7 @@ const Home = () => {
       dispatch(setFilter({...params, sort}));
       isSearch.current = true
     }
-  }, [])
+  }, [dispatch])
 
   React.useEffect(() => {
     window.scrollTo(0, 0)
@@ -85,9 +76,9 @@ const Home = () => {
       navigate(`?${queryString}`)
     }
     isMounted.current = true
-  }, [categoriesId, sort.sortProperty, pageCount]);
+  }, [categoriesId, sort.sortProperty, pageCount, navigate]);
 
-  const pizz = pizItems.map(obj => <PizzaBlock key={obj.id} {...obj}/>);
+  const pizz = pizItems.map(obj => <Link  key={obj.id} to={`/pizza/${obj.id}`} ><PizzaBlock {...obj}/></Link> );
   const skeletons = [...new Array(6)].map((_, index) => <PizzaSkeleton key={index}/>)
 
   

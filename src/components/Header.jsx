@@ -1,13 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Search from "./Search/index";
+import { selectCart } from "../redux/slices/cartSlice";
+import { Link, useLocation } from "react-router-dom";
 
-import { Link } from "react-router-dom";
 
+function Header() {
 
-function Header({searchValue, setSearchValue}) {
-
-  const { items, totalPrice } = useSelector(state => state.cart)
+  const { items, totalPrice } = useSelector(selectCart)
+  const location = useLocation()
 
   const totalCount = items.reduce((sum, item) => sum + item.count, 0)
 
@@ -23,8 +24,8 @@ function Header({searchValue, setSearchValue}) {
             </div>
           </div>
         </Link>
-        <Search searchValue={searchValue} setSearchValue={setSearchValue}/>
-        <div className="header__cart">
+        <Search />
+        { location.pathname !== '/cart' && <div className="header__cart">
           <Link to="/cart" className="button button--cart">
             <span>{totalPrice} ₽</span>
             <div className="button__delimiter"></div>
@@ -58,7 +59,7 @@ function Header({searchValue, setSearchValue}) {
             </svg>
             <span>{totalCount}</span>
           </Link>
-        </div>
+        </div>}
       </div>
     </div>
   );
